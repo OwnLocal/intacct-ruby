@@ -29,6 +29,13 @@ module IntacctRuby
         (value && value != "") || required_fields.include?(field) ? args.merge(field=>value) : args
       end
     end
+
+    def delete_read_args_value(value)
+      return nil if value.nil? || value == ""
+      return value unless value.is_a?(Array)
+      return value.join(',')
+    end
+
     def to_xml
       xml = Builder::XmlMarkup.new
 
@@ -58,13 +65,7 @@ module IntacctRuby
       xml.target!
     end
 
-    def delete_read_args_value(value)
-      return nil if value.nil? || value == ""
-      return value unless value.is_a?(Array)
-      return value.join(',')
-    end
-    
-    private
+  private
 
     def timestamp
       @timestamp ||= Time.now.utc.to_s
