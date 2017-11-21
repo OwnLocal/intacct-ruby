@@ -6,19 +6,20 @@ describe IntacctRuby::Api do
     it 'sends a request via HTTPS' do
       request_xml = '<xml>some xml</xml>'
 
-      request = mock('Request')
-      request.expects(:to_xml).returns request_xml
+      request = class_double('Request')
+      expect(request).to receive(:to_xml).and_return(request_xml)
 
-      post_request_spy = mock('Net::HTTP::Post')
-      post_request_spy.expects(:body=).with request_xml
-      post_request_spy.expects(:[]=).with 'Content-Type',
-                                          'x-intacct-xml-request'
+      post_request_spy = instance_double('Net::HTTP::Post')
+      expect(post_request_spy).to receive(:body=).and_return(request_xml)
+      expect(post_request_spy).to receive(:[]=).and_return({
+        'Content-Type' => 'x-intacct-xml-request'
+      })
 
-      http_gateway_spy = mock('Net::HTTP')
-      http_gateway_spy.expects(:use_ssl=).with true
-      http_gateway_spy.expects(:request).with post_request_spy
+      http_gateway_spy = instance_double('Net::HTTP')
+      expect(http_gateway_spy).to receive(:use_ssl=).and_return(true)
+      expect(http_gateway_spy).to receive(:request).and_return(post_request_spy)
 
-      Api.new(http_gateway_spy).send_request(request, post_request_spy)
+      IntacctRuby::Api.new(http_gateway_spy).send_request(request, post_request_spy)
     end
   end
 end
