@@ -1,3 +1,3 @@
 module IntacctRuby
-  VERSION = '1.8.3'.freeze
+  VERSION = '1.9.0'.freeze
 end
