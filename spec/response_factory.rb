@@ -1,5 +1,4 @@
 require 'builder'
-require 'mocha/api'
 
 # for generating responses to be used in testing
 class ResponseFactory
