@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'mocha/api'
 require 'nokogiri'
 
 require 'intacct_ruby/request'
@@ -7,8 +6,6 @@ require 'intacct_ruby/function'
 require 'intacct_ruby/response'
 require 'intacct_ruby/exceptions/insufficient_credentials_exception'
 require 'intacct_ruby/exceptions/empty_request_exception'
-
-require 'pry'
 
 include IntacctRuby
 
@@ -58,7 +55,7 @@ describe Request do
       api_spy = instance_double('IntacctRuby::Api')
       expect(api_spy).to receive(:send_request).with(request).and_return(response)
 
-      Response.expects(:new).with(response)
+      expect(Response).to receive(:new).with(response)
 
       request.send(api: api_spy)
     end

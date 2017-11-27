@@ -3,7 +3,6 @@ require 'intacct_ruby/api'
 
 describe IntacctRuby::Api do
   describe :send_request do
-
     it 'sends a request via HTTPS' do
       request_xml = '<xml>some xml</xml>'
 
@@ -21,7 +20,6 @@ describe IntacctRuby::Api do
       expect(http_gateway_spy).to receive(:request).and_return(post_request_spy)
 
       IntacctRuby::Api.new(http_gateway_spy).send_request(request, post_request_spy)
-
     end
   end
 end
