@@ -11,13 +11,14 @@ module IntacctRuby
       read
       readByName
       create
+      create_invoice
       update
       delete
     ).freeze
 
     def initialize(function_type, object_type, arguments = {})
       @function_type = function_type.to_s
-      @object_type = object_type.to_s
+      @object_type = object_type && object_type.to_s
       @arguments = arguments
 
       validate_type!
@@ -50,12 +51,14 @@ module IntacctRuby
             when 'delete'
               args = self.delete_read_args([:keys])
             end
-            xml << argument_xml(:object=>@object_type)
+            xml << argument_xml(object: @object_type)
             xml << argument_xml(args)
           end
         else
           xml.tag!(@function_type) do
-            xml.tag!(@object_type.upcase) do
+            if @object_type
+              xml.tag!(@object_type.upcase) { xml << argument_xml(@arguments) }
+            else
               xml << argument_xml(@arguments)
             end
           end
@@ -113,7 +116,7 @@ module IntacctRuby
     def validate_type!
       unless ALLOWED_TYPES.include?(@function_type)
         raise Exceptions::UnknownFunctionType,
-              "Type #{@object_type} not recognized. Function Type must be " \
+              "Type #{@function_type} not recognized. Function Type must be " \
               "one of #{ALLOWED_TYPES}."
       end
     end
