@@ -46,8 +46,10 @@ module IntacctRuby
             case @function_type.to_s
             when 'read', 'readByName'
               args = self.delete_read_args([:keys, :fields], :keys)
-            when 'readByQuery', 'readMore'
+            when 'readByQuery'
               args = self.delete_read_args([:fields, :query, :pagesize], :query)
+            when 'readMore'
+              args = self.delete_read_args([:fields, :query, :pagesize, :resultId], :resultId)
             when 'delete'
               args = self.delete_read_args([:keys])
             end
