@@ -53,7 +53,8 @@ module IntacctRuby
             when 'delete'
               args = self.delete_read_args([:keys])
             end
-            xml << argument_xml(object: @object_type)
+
+            xml << argument_xml(object: @object_type) unless !@object_type
             xml << argument_xml(args)
           end
         else
