@@ -168,7 +168,8 @@ describe Function do
         end
 
         it 'calls delete_read_args has an object node with no params' do
-          expect(function).to receive(:delete_read_args).with([:fields, :query, :pagesize], :query)
+          expect(function).to receive(:delete_read_args)
+            .with([:fields, :query, :pagesize, :resultId], :resultId)
             .and_return({ widget: 'value' })
           expect(function).to receive(:argument_xml).with({ object: object_type.to_s })
             .and_return("<object>#{object_type}</object>")
