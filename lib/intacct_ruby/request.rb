@@ -34,7 +34,9 @@ module IntacctRuby
       @opts = DEFAULTS.dup.merge request_params
 
       # If a hash is provided + popped, the remaining attrs are functions
-      @functions = functions
+      # In cases where an array is passed in as the functions arg, it needs to be flattened.
+      #   Otherwise the @functions property of the Request object will have an array of arrays.
+      @functions = functions.flatten
     end
 
     def to_xml

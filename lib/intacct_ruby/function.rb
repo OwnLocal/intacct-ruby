@@ -11,13 +11,14 @@ module IntacctRuby
       read
       readByName
       create
+      create_invoice
       update
       delete
     ).freeze
 
     def initialize(function_type, object_type, arguments = {})
       @function_type = function_type.to_s
-      @object_type = object_type.to_s
+      @object_type = object_type && object_type.to_s
       @arguments = arguments
 
       validate_type!
@@ -29,6 +30,13 @@ module IntacctRuby
         (value && value != "") || required_fields.include?(field) ? args.merge(field=>value) : args
       end
     end
+
+    def delete_read_args_value(value)
+      return nil if value.nil? || value == ""
+      return value unless value.is_a?(Array)
+      return value.join(',')
+    end
+
     def to_xml
       xml = Builder::XmlMarkup.new
 
@@ -38,17 +46,22 @@ module IntacctRuby
             case @function_type.to_s
             when 'read', 'readByName'
               args = self.delete_read_args([:keys, :fields], :keys)
-            when 'readByQuery', 'readMore'
+            when 'readByQuery'
               args = self.delete_read_args([:fields, :query, :pagesize], :query)
+            when 'readMore'
+              args = self.delete_read_args([:fields, :query, :pagesize, :resultId], :resultId)
             when 'delete'
               args = self.delete_read_args([:keys])
             end
-            xml << argument_xml(:object=>@object_type)
+
+            xml << argument_xml(object: @object_type) unless !@object_type
             xml << argument_xml(args)
           end
         else
           xml.tag!(@function_type) do
-            xml.tag!(@object_type.upcase) do
+            if @object_type
+              xml.tag!(@object_type.upcase) { xml << argument_xml(@arguments) }
+            else
               xml << argument_xml(@arguments)
             end
           end
@@ -58,13 +71,7 @@ module IntacctRuby
       xml.target!
     end
 
-    def delete_read_args_value(value)
-      return nil if value.nil? || value == ""
-      return value unless value.is_a?(Array)
-      return value.join(',')
-    end
-    
-    private
+  private
 
     def timestamp
       @timestamp ||= Time.now.utc.to_s
@@ -112,7 +119,7 @@ module IntacctRuby
     def validate_type!
       unless ALLOWED_TYPES.include?(@function_type)
         raise Exceptions::UnknownFunctionType,
-              "Type #{@object_type} not recognized. Function Type must be " \
+              "Type #{@function_type} not recognized. Function Type must be " \
               "one of #{ALLOWED_TYPES}."
       end
     end

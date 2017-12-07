@@ -4,6 +4,22 @@
 
 A wrapper for [Intacct's API](https://developer.intacct.com/wiki/functions-object), which tries to stay as close as it can to the syntax and philosophy of the API itself.
 
+## About this Fork
+
+This is a third-generation fork of the [original IntacctRuby code](https://github.com/jzornow/intacct-ruby). The current tree looks like this:
+
+```
+jzornow/intacct-ruby
+  |
+  EnglishLanguageInstitute/intacct-ruby
+    |
+    TeamDriveAway/intacct-ruby
+      |
+      OwnLocal/intacct-ruby
+```
+
+The reason for the multiple forks is because the original code by jzornow is missing several features that have since been added by other contributors. However, OwnLocal still has requirements for our own Intacct sync that these other contributors have not added. Thus, this fork will ensure that (1) we can customize this gem for any of OwnLocal's unique requirements, and (2) the code remains stable, and we aren't blindsided by major changes or the code being removed from GitHub completely.
+
 ## The Power of Multi-Function Api Calls
 Unlike the other Gems out in the Rubyverse, this library supports one of the Intacct API's most powerful features: multi-function API calls.
 

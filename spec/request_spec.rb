@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'mocha/api'
 require 'nokogiri'
 
 require 'intacct_ruby/request'
@@ -43,9 +42,7 @@ end
 
 def function_stubs
   @function_stubs ||= %i(function_a function_b).map do |function|
-    mock do
-      stubs(:to_xml).returns("[#{function}]")
-    end
+    instance_double('IntacctRuby::Function', { to_xml: "[#{function}]" })
   end
 end
 
@@ -53,12 +50,12 @@ describe Request do
   describe :send do
     it 'sends request through the API' do
       request = Request.new(*function_stubs, AUTHENTICATION_PARAMS)
-      response = mock('IntacctRuby::Response')
+      response = instance_double('IntacctRuby::Response')
 
-      api_spy = mock('IntacctRuby::Api')
-      api_spy.expects(:send_request).with(request).returns(response)
+      api_spy = instance_double('IntacctRuby::Api')
+      expect(api_spy).to receive(:send_request).with(request).and_return(response)
 
-      Response.expects(:new).with(response)
+      expect(Response).to receive(:new).with(response)
 
       request.send(api: api_spy)
     end
@@ -175,10 +172,10 @@ describe Request do
     end
 
     context 'with no overrides' do
-      before(:all) { generate_request_xml }
-
       describe 'control block' do
         it 'contains default values' do
+          generate_request_xml
+
           %i(uniqueid dtdversion includewhitespace).each do |field_name|
             expected_value = Request::DEFAULTS[field_name].to_s
             actual_value = get_value_from control_block_xml, field_name.to_s
@@ -190,6 +187,8 @@ describe Request do
 
       describe 'operation block' do
         it 'shows transaction default' do
+          generate_request_xml
+
           expect(operation_block_xml.first.attributes['transaction'].value)
             .to eq Request::DEFAULTS[:transaction].to_s
         end
