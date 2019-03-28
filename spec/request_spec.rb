@@ -1,6 +1,8 @@
 require 'spec_helper'
 require 'nokogiri'
 
+require 'date'
+
 require 'intacct_ruby/request'
 require 'intacct_ruby/function'
 require 'intacct_ruby/response'
