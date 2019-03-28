@@ -13,6 +13,6 @@ jobs:
 
 workflows:
   version: 2
-  ownlocalization:
+  intacct_ruby:
     jobs:
       - test
