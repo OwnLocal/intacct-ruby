@@ -1,0 +1,18 @@
+---
+version: 2
+
+jobs:
+  test:
+    working_directory: ~/intacct-ruby
+    docker:
+      - image: circleci/ruby:2.3-browsers
+    steps:
+      - checkout
+      - run: bundle --path vendor/bundle
+      - run: bundle exec rspec
+
+workflows:
+  version: 2
+  intacct_ruby:
+    jobs:
+      - test
